@@ -1,7 +1,9 @@
 import Header from "../Components/Header";
+import Days from '../Components/Days';
 import '../CSS/style.css'
 import { useState } from "react";
 import { addMonths, subMonths} from 'date-fns';
+{/* addMonths, subMonths 는 date-fns의 메소드이다. */}
 
 const Calander = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -18,13 +20,18 @@ const Calander = () => {
 
   return (
     <>
-    {/* Header 부분 렌더링 */}
+      {/* Header 부분 렌더링 */}
       <Header
         currentMonth={currentMonth}
         prevMonth={prevMonth}
         nextMonth={nextMonth}
       /> 
       
+      {/* 요일 렌더링 */}
+      <Days/>
+      
+
+
     </>
   );
 }
