@@ -1,15 +1,8 @@
 import { useEffect, useState } from "react";
 import Loading from '../Components/Loading';
 import axios from "axios";
-import styled from "styled-components";
-import {Link} from 'react-router-dom';
-import {AiOutlineLeft,AiOutlineRight} from "react-icons/ai";
 
-const ArrowStyle = {color:'#696969', fontSize:'22px', marginTop:'25px'};
 
-const Header = styled.div`
-display:flex;
-`
 
 const January = () => {
     {/* 로딩창 on/off */}
@@ -42,22 +35,9 @@ const January = () => {
     }
     return(
         <>
-        <Header>
-            <h5 style={{color:'white', fontSize:'16px'}}>
-                2022년 1월
-            </h5>
-            
-            {/* 저번달로 가는 화살표 */}
-            <Link style={{marginLeft:'820px',marginRight:'8px'}} to='/'>
-                <AiOutlineLeft style={ArrowStyle}/>
-            </Link>
+        
 
-            {/* 다음달로 가는 화살표 */}
-            <Link style={{marginLeft:'8px'}} to='/Feb'>
-            <AiOutlineRight style={ArrowStyle}/>
-            </Link>
 
-        </Header>
 
         </>
     )
