@@ -1,5 +1,5 @@
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, format } from "date-fns";
-import { isSameMonth, addDays} from "date-fns";
+import {  addDays} from "date-fns";
 import styled from "styled-components";
 
 {/* 달력 틀 css */}
@@ -15,8 +15,12 @@ display:flex;
 width:900px;
 height:150px;
 flex-direction:row;
+div:first-child{
+    background-color:#2b2b2b;
+}
 div:last-child{
     border-right-style:solid;
+    background-color:#2b2b2b;
 }
 `
 {/* 달력 하루(1일) css */}
@@ -24,9 +28,14 @@ const DivDay = styled.div`
 width:125px;
 height:150px;
 display:flex;
-border: 0.1px solid white;
+border: 0.1px solid #363636;
 justify-content:flex-end;
 border-right-style:none;
+span{
+    display:flex;
+    margin-top:5px;
+    margin-right:10px;
+}
 `
 
 const Main = (currentMonth) => {
@@ -49,8 +58,11 @@ const Main = (currentMonth) => {
             formattedDate = format(day, 'd');
             days.push(
                 <DivDay>
+                    {/* 해당달의 1일에만 월,일 추가 표시 + 1일을 제외하고는 일만 표시하기 , 다음달의 1일에도 표시되지 않기 위한 코드입니다.*/}
                     <span className={format(monthStart,"M") === format(day,'M') ? "" : "notsamemonth"} key={day}>
-                    {formattedDate}
+                    {format(monthStart,"M") === format(day,'M') && formattedDate == '1' ? 
+                    format(monthStart,'M')+'월'+formattedDate+'일' 
+                    : formattedDate}
                     </span>
                 </DivDay>
                 );
