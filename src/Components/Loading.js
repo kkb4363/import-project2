@@ -1,3 +1,5 @@
+{/* api 받아오는 동안 렌더링 되는 페이지입니다. */}
+
 const Loading = () => {
     return(
         <>
