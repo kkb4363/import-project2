@@ -5,8 +5,6 @@ import { useState } from "react";
 import { addMonths, subMonths} from 'date-fns';
 import Main from "../Components/Main";
 
-
-
 const Calander = () => {
   {/* new Date()함수로 현재 시간,날짜를 알 수있다. */}
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -19,9 +17,6 @@ const Calander = () => {
   const nextMonth = () => {
   setCurrentMonth(addMonths(currentMonth, 1));
   }; 
-
-  
- 
 
   return (
     <>

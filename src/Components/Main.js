@@ -34,10 +34,17 @@ display:flex;
 border: 0.1px solid #363636;
 justify-content:flex-end;
 border-right-style:none;
-span{
+span:first-child{
     display:flex;
     margin-top:5px;
     margin-right:10px;
+    position:relative;
+}
+span:last-child{
+    position:absolute;
+    margin-top:120px;
+    margin-right:10px;
+    color:#808080
 }
 `
 
@@ -46,6 +53,8 @@ const Main = (currentMonth) => {
     const monthEnd = endOfMonth(monthStart);                    {/* 해당 달 마지막 일 값 구하기 */}
     const startDate = startOfWeek(monthStart);                  {/* 첫 주의 첫번째 값 표시하기 위해 쓰임. */}
     const endDate = endOfWeek(monthEnd);                        {/* 마지막주의 마지막 값까지 표시하기 위해 쓰임. */}
+    const toapiyear = format(monthStart,'yyyy').toString();
+    const toapimonth = format(monthStart,'M').padStart(2,'0').toString()
 
     let day = startDate;                                        {/* day = 첫째날 */}
     let days = [];                                              {/* 1주일치 day를 저장하기 위한 배열 */}
@@ -55,33 +64,40 @@ const Main = (currentMonth) => {
     const [isLoading,setisloading] = useState(true);
     const [lunday,setlunday] = useState([]);
     useEffect(()=>{
-    axios.get(`https://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=2022&solMonth=01&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
+    axios.get(`https://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
     .then((res)=>{setlunday(res.data.response.body.items.item);
-                setisloading(false);})
+        setisloading(false);})
     },);
-  
-    
+    console.log(toapimonth)
     
     while(day <= endDate){
-        {/* for문 => 일주일치 day를 line배열에 저장하기 */}
+        {/* for문 => 1. 일주일치 day를 line배열에 저장하기 */}
         for(let i=0; i<7; i++){
             formattedDate = format(day, 'd').padStart(2,'0').toString();
+            {/* 다른 달일 경우 회색으로 표시하기 위해 if문 사용 */}
             if(format(monthStart,'M') != format(day,'M')){
                 days.push(
                 <DivDay>
                 <span className='notsamemonth' key={day}>
                 {formattedDate}
                 </span>
+                <span>
+                    
+                </span>
                 </DivDay>
                 )
                 }
-                else{
+            else{
                 days.push(
                 <DivDay>
-                <span key={day}>
+                <span key={day}>{/* 양력 출력 */}
                 {formattedDate == '01' ? 
                 format(monthStart,'M') + '월' + formattedDate + '일' :
-                lunday.find(lun => lun.solDay == formattedDate)?.solDay}
+                lunday.find(sol => sol.solDay == formattedDate)?.solDay}
+                </span>
+                <span key={day+'100'}>{/* 음력 출력 */}
+                    {lunday.find(lun => lun.solDay == formattedDate)?.lunMonth+'월'
+                    +lunday.find(lun => lun.solDay == formattedDate)?.lunDay+'일'}
                 </span>
                 </DivDay>
                 )

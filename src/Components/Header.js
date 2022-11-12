@@ -24,7 +24,7 @@ div:first-child{
     background-color:white;
 }
 div:last-child{
-    width:880px;
+    width:800px;
     height:3px;
     margin-top:8px;
     background-color:rgba(52, 52, 52, 0.9);
@@ -33,6 +33,12 @@ div:last-child{
 {/* 0000년 0월 + 지난달 화살표, 다음달 화살표 CSS */}
 const Main = styled.div`
 display:flex;
+position:relative;
+div{
+    position:absolute;
+    margin-left:810px;
+    display:flex;
+}
 `
 
 const Header = ({currentMonth, prevMonth, nextMonth}) =>{
@@ -59,7 +65,8 @@ const Header = ({currentMonth, prevMonth, nextMonth}) =>{
                 {format(currentMonth, 'yyyy')}년 {format(currentMonth, 'M')}월 
                 {/* format 형식 = y는 연도, m은 월, d는 일을 나타냄. */}
             </h5>
-            
+
+            <div>
             {/* 저번달로 가는 화살표 */}
             <AiOutlineLeft onClick={prevMonth} style={ArrowStyle}/>
             <h5 style={{color:'white',fontSize:'15px'}}> 
@@ -67,6 +74,8 @@ const Header = ({currentMonth, prevMonth, nextMonth}) =>{
             </h5>
             {/* 다음달로 가는 화살표 */}
             <AiOutlineRight onClick={nextMonth} style={ArrowStyle}/>
+            </div>
+            
         
         </Main>
         </>
