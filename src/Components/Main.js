@@ -1,6 +1,9 @@
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, format } from "date-fns";
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, format, isLeapYear } from "date-fns";
 import {  addDays} from "date-fns";
 import styled from "styled-components";
+import axios from "axios";
+import {useEffect,useState} from 'react';
+import Loading from "./Loading";
 
 {/* 달력 틀 css */}
 const DivWrapper = styled.div`
@@ -49,23 +52,40 @@ const Main = (currentMonth) => {
     let line = [];                                              {/* 전체 day를 출력하기 위해 days배열을 7주일씩 전부 저장하기 위한 배열 */}
     let formattedDate = '';
     
-    console.log(format(day,'M'))
-    console.log(format(monthStart,'M'))
-    {/* while(startdate<=enddate) */}
+    const [isLoading,setisloading] = useState(true);
+    const [lunday,setlunday] = useState([]);
+    useEffect(()=>{
+    axios.get(`https://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=2022&solMonth=01&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
+    .then((res)=>{setlunday(res.data.response.body.items.item);
+                setisloading(false);})
+    },);
+  
+    
+    
     while(day <= endDate){
         {/* for문 => 일주일치 day를 line배열에 저장하기 */}
         for(let i=0; i<7; i++){
-            formattedDate = format(day, 'd');
-            days.push(
+            formattedDate = format(day, 'd').padStart(2,'0').toString();
+            if(format(monthStart,'M') != format(day,'M')){
+                days.push(
                 <DivDay>
-                    {/* 해당달의 1일에만 월,일 추가 표시 + 1일을 제외하고는 일만 표시하기 , 다음달의 1일에도 표시되지 않기 위한 코드입니다.*/}
-                    <span className={format(monthStart,"M") === format(day,'M') ? "" : "notsamemonth"} key={day}>
-                    {format(monthStart,"M") === format(day,'M') && formattedDate == '1' ? 
-                    format(monthStart,'M')+'월'+formattedDate+'일' 
-                    : formattedDate}
-                    </span>
+                <span className='notsamemonth' key={day}>
+                {formattedDate}
+                </span>
                 </DivDay>
-                );
+                )
+                }
+                else{
+                days.push(
+                <DivDay>
+                <span key={day}>
+                {formattedDate == '01' ? 
+                format(monthStart,'M') + '월' + formattedDate + '일' :
+                lunday.find(lun => lun.solDay == formattedDate)?.solDay}
+                </span>
+                </DivDay>
+                )
+                }
             day = addDays(day,1);
         }
 
@@ -81,7 +101,8 @@ const Main = (currentMonth) => {
 
     return(
         <>
-        <DivWrapper>{line}</DivWrapper>
+        {isLoading ? <Loading/> :
+                    <DivWrapper>{line}</DivWrapper>}
         </>
     )
 
