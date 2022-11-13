@@ -1,4 +1,4 @@
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, format, isLeapYear } from "date-fns";
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, format, isLeapYear, monthsToQuarters } from "date-fns";
 import {  addDays} from "date-fns";
 import styled from "styled-components";
 import axios from "axios";
@@ -46,6 +46,7 @@ span:last-child{
     margin-right:10px;
     color:#808080
 }
+
 `
 
 const Main = (currentMonth) => {
@@ -53,22 +54,33 @@ const Main = (currentMonth) => {
     const monthEnd = endOfMonth(monthStart);                    {/* 해당 달 마지막 일 값 구하기 */}
     const startDate = startOfWeek(monthStart);                  {/* 첫 주의 첫번째 값 표시하기 위해 쓰임. */}
     const endDate = endOfWeek(monthEnd);                        {/* 마지막주의 마지막 값까지 표시하기 위해 쓰임. */}
-    const toapiyear = format(monthStart,'yyyy').toString();
-    const toapimonth = format(monthStart,'M').padStart(2,'0').toString()
+
+    const toapiyear = format(monthStart,'yyyy').toString();     {/* API 주소에 넣을 해당 연도 */}
+    const toapimonth = format(monthStart,'MM').toString(); {/* API 주소에 넣을 해당 월 */}
+    const PATH_NAME = `https://apis.data.go.kr/B090041/openapi/service`;
+    
 
     let day = startDate;                                        {/* day = 첫째날 */}
     let days = [];                                              {/* 1주일치 day를 저장하기 위한 배열 */}
     let line = [];                                              {/* 전체 day를 출력하기 위해 days배열을 7주일씩 전부 저장하기 위한 배열 */}
     let formattedDate = '';
     
+    const [holiday, setholiday] = useState([]);
+    useEffect(()=>{
+        axios.get(`${PATH_NAME}/SpcdeInfoService/getRestDeInfo?solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI%2FmxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG%2FQQQ%3D%3D`)
+        .then((res)=>{
+            setholiday(res.data.response.body.items.item);
+        })},);
+
+    
     const [isLoading,setisloading] = useState(true);
     const [lunday,setlunday] = useState([]);
     useEffect(()=>{
-    axios.get(`https://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
-    .then((res)=>{setlunday(res.data.response.body.items.item);
-        setisloading(false);})
-    },);
-    console.log(toapimonth)
+        axios.get(`${PATH_NAME}/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
+        .then((res)=>{setlunday(res.data.response.body.items.item);
+            setisloading(false);
+        })},);
+    
     
     while(day <= endDate){
         {/* for문 => 1. 일주일치 day를 line배열에 저장하기 */}
@@ -77,7 +89,7 @@ const Main = (currentMonth) => {
             {/* 다른 달일 경우 회색으로 표시하기 위해 if문 사용 */}
             if(format(monthStart,'M') != format(day,'M')){
                 days.push(
-                <DivDay>
+                <DivDay key={day+"111"}>
                 <span className='notsamemonth' key={day}>
                 {formattedDate}
                 </span>
@@ -89,7 +101,7 @@ const Main = (currentMonth) => {
                 }
             else{
                 days.push(
-                <DivDay>
+                <DivDay key={day+'55'}>
                 <span key={day}>{/* 양력 출력 */}
                 {formattedDate == '01' ? 
                 format(monthStart,'M') + '월' + formattedDate + '일' :
