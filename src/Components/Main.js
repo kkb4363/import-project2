@@ -56,10 +56,9 @@ const Main = (currentMonth) => {
     const endDate = endOfWeek(monthEnd);                        {/* 마지막주의 마지막 값까지 표시하기 위해 쓰임. */}
 
     const toapiyear = format(monthStart,'yyyy').toString();     {/* API 주소에 넣을 해당 연도 */}
-    const toapimonth = format(monthStart,'MM').toString(); {/* API 주소에 넣을 해당 월 */}
+    const toapimonth = format(monthStart,'MM').toString();      {/* API 주소에 넣을 해당 월 */}
     const PATH_NAME = `https://apis.data.go.kr/B090041/openapi/service`;
     
-
     let day = startDate;                                        {/* day = 첫째날 */}
     let days = [];                                              {/* 1주일치 day를 저장하기 위한 배열 */}
     let line = [];                                              {/* 전체 day를 출력하기 위해 days배열을 7주일씩 전부 저장하기 위한 배열 */}
@@ -70,7 +69,7 @@ const Main = (currentMonth) => {
         axios.get(`${PATH_NAME}/SpcdeInfoService/getRestDeInfo?solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI%2FmxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG%2FQQQ%3D%3D`)
         .then((res)=>{
             setholiday(res.data.response.body.items.item);
-        })},);
+        })});
 
     
     const [isLoading,setisloading] = useState(true);
@@ -79,8 +78,16 @@ const Main = (currentMonth) => {
         axios.get(`${PATH_NAME}/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
         .then((res)=>{setlunday(res.data.response.body.items.item);
             setisloading(false);
+        })});
+
+    const [test,settest] = useState([]);
+    useEffect(()=>{
+        axios.get(`https://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=2022&solMonth=01&_type=json&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
+        .then((res)=>{setlunday(res.data.response.body.items.item);
         })},);
-    
+        
+        console.log(lunday)
+   
     
     while(day <= endDate){
         {/* for문 => 1. 일주일치 day를 line배열에 저장하기 */}
