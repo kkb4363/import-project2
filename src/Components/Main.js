@@ -82,12 +82,12 @@ const Main = (currentMonth) => {
 
     const [test,settest] = useState([]);
     useEffect(()=>{
-        axios.get(`https://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=2022&solMonth=01&_type=json&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
-        .then((res)=>{setlunday(res.data.response.body.items.item);
+        axios.get(`https://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=2022&solMonth=11&_type=json&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
+        .then((res)=>{settest(res.data.response.body.items.item);
         })},);
         
-        console.log(lunday)
-   
+        console.log(test)
+
     
     while(day <= endDate){
         {/* for문 => 1. 일주일치 day를 line배열에 저장하기 */}
