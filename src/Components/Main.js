@@ -69,7 +69,7 @@ const Main = (currentMonth) => {
         axios.get(`${PATH_NAME}/SpcdeInfoService/getRestDeInfo?solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI%2FmxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG%2FQQQ%3D%3D`)
         .then((res)=>{
             setholiday(res.data.response.body.items.item);
-        })});
+        })}, [PATH_NAME, toapiyear, toapimonth]);
 
     
     const [isLoading,setisloading] = useState(true);
@@ -78,15 +78,15 @@ const Main = (currentMonth) => {
         axios.get(`${PATH_NAME}/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
         .then((res)=>{setlunday(res.data.response.body.items.item);
             setisloading(false);
-        })});
+        })}, [PATH_NAME, toapiyear, toapimonth]);
 
-    const [test,settest] = useState([]);
-    useEffect(()=>{
-        axios.get(`https://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=2022&solMonth=11&_type=json&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
-        .then((res)=>{settest(res.data.response.body.items.item);
-        })},);
+    // const [test,settest] = useState([]);
+    // useEffect(()=>{
+    //     axios.get(`https://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=2022&solMonth=11&_type=json&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
+    //     .then((res)=>{settest(res.data.response.body.items.item);
+    //     })}, [PATH_NAME, toapiyear, toapimonth]);
         
-        console.log(test)
+    //     console.log(test)
 
     
     while(day <= endDate){
@@ -114,10 +114,16 @@ const Main = (currentMonth) => {
                 format(monthStart,'M') + '월' + formattedDate + '일' :
                 lunday.find(sol => sol.solDay == formattedDate)?.solDay}
                 </span>
+                <span key={day+'200'}>{/* 공휴일 출력 */}
+                    {console.log(Array.isArray(holiday))}
+                    {Array.isArray(holiday) ? holiday?.find(item => item.locdate.toString().slice(-2) == formattedDate)?.dateName
+                    : holiday?.locdate.toString().slice(-2) == formattedDate ? holiday.dateName : ''}
+                </span>
                 <span key={day+'100'}>{/* 음력 출력 */}
                     {lunday.find(lun => lun.solDay == formattedDate)?.lunMonth+'월'
                     +lunday.find(lun => lun.solDay == formattedDate)?.lunDay+'일'}
                 </span>
+                
                 </DivDay>
                 )
                 }
