@@ -74,19 +74,22 @@ const Main = (currentMonth) => {
     
     const [isLoading,setisloading] = useState(true);
     const [lunday,setlunday] = useState([]);
-    useEffect(()=>{
-        axios.get(`${PATH_NAME}/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
-        .then((res)=>{setlunday(res.data.response.body.items.item);
-            setisloading(false);
-        })});
-
-    const [test,settest] = useState([]);
-    useEffect(()=>{
-        axios.get(`https://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=2022&solMonth=01&_type=json&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
-        .then((res)=>{setlunday(res.data.response.body.items.item);
-        })},);
-        
-        console.log(lunday)
+    
+        useEffect(()=>{
+                const getData = () => {
+                    axios.get(`${PATH_NAME}/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
+                    .then((res) => {setlunday(res.data.response.body.items.item)
+                    setisloading(false);
+                    })
+                }
+            return () => {if(lunday.length == 0 || lunday[15]?.solMonth != toapimonth){
+                getData();
+            }else{
+                console.log("더이상 호출할 필요가 없습니다");
+            }}
+        })
+    console.log(lunday)
+    
    
     
     while(day <= endDate){
@@ -136,7 +139,7 @@ const Main = (currentMonth) => {
 
     return(
         <>
-        {isLoading ? <Loading/> :
+        {isLoading ? <Loading/>:
                     <DivWrapper>{line}</DivWrapper>}
         </>
     )
