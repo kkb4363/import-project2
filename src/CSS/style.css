@@ -1,8 +1,122 @@
-body{
-    background-color: rgba(0,0,0,0.9);
-    color:white;
+body {
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
 }
 
-.notsamemonth{
-    color:#808080;
+.nav {
+  display: flex;
+}
+
+.nav > span {
+  margin-left: 5px;
+  font-size: 18px;
+}
+
+/* 제목없음 위에 바 만들기 CSS */
+.hr {
+  display: flex;
+}
+
+.hr > div:first-child {
+  width: 120px;
+  height: 3px;
+  margin-top: 8px;
+  background-color: white;
+}
+
+.hr > div:last-child {
+  width: 800px;
+  height: 3px;
+  margin-top: 8px;
+  background-color: rgba(52, 52, 52, 0.9);
+}
+
+/* 0000년 0월 + 지난달 화살표, 다음달 화살표 CSS */
+.main {
+  display: flex;
+  position: relative;
+}
+
+.main > div {
+  position: absolute;
+  margin-left: 810px;
+  display: flex;
+}
+
+.notsamemonth {
+  color: #808080;
+}
+
+/* 달력 틀 */
+.wrapper {
+  display: flex;
+  height: 900px;
+  width: 900px;
+  flex-direction: column;
+}
+
+/* 달력 한줄(1주일) */
+.week {
+  display: flex;
+  width: 900px;
+  height: 150px;
+  flex-direction: row;
+}
+
+.week > div:first-child {
+  background-color: #2b2b2b;
+}
+
+.week > div:last-child {
+  border-right-style: solid;
+  background-color: #2b2b2b;
+}
+
+/* 달력 하루(1일) */
+.day {
+  width: 125px;
+  height: 150px;
+  display: flex;
+  border: 0.1px solid #363636;
+  justify-content: flex-end;
+  border-right-style: none;
+}
+
+.day > span:first-child {
+  display: flex;
+  margin-top: 5px;
+  margin-right: 10px;
+  position: relative;
+}
+
+.day > span:nth-child(2) {
+  position: absolute;
+  margin-top: 30px;
+  margin-right: 10px;
+  color: #808080;
+}
+
+.day > span:last-child {
+  position: absolute;
+  margin-top: 120px;
+  margin-right: 10px;
+  color: rgb(235, 87, 87);
+}
+
+/* 요일 나타내는 css 감싸주는 wrapper */
+.days-wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 880px;
+  margin-top: -20px;
+}
+
+/* 요일 나타내는 css(일,월,화 ~~~) */
+.days-div {
+  width: 120px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #808080;
 }
