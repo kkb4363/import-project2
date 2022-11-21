@@ -1,5 +1,5 @@
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, format, isLeapYear, monthsToQuarters } from "date-fns";
-import {  addDays} from "date-fns";
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, format, isSameMinute } from "date-fns";
+import { addDays} from "date-fns";
 import styled from "styled-components";
 import axios from "axios";
 import {useEffect,useState} from 'react';
@@ -34,8 +34,8 @@ display:flex;
 border: 0.1px solid #363636;
 justify-content:flex-end;
 border-right-style:none;
-`
 
+`
 const Main = (currentMonth) => {
     const monthStart = startOfMonth(currentMonth.currentMonth); {/* 해당 달 1일값 구하기 */}
     const monthEnd = endOfMonth(monthStart);                    {/* 해당 달 마지막 일 값 구하기 */}
@@ -51,47 +51,30 @@ const Main = (currentMonth) => {
     let line = [];                                              {/* 전체 day를 출력하기 위해 days배열을 7주일씩 전부 저장하기 위한 배열 */}
     let formattedDate = '';
     
+    const [holiday, setholiday] = useState([]);
+    useEffect(()=>{
+        axios.get(`${PATH_NAME}/SpcdeInfoService/getRestDeInfo?solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI%2FmxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG%2FQQQ%3D%3D`)
+        .then((res)=>{
+            setholiday(res.data.response.body.items.item);
+        })}, [PATH_NAME, toapiyear, toapimonth]);
 
     const [isLoading,setisloading] = useState(true);
     const [lunday,setlunday] = useState([]);
-    const [holiday, setholiday] = useState([]);
+    useEffect(()=>{
+        axios.get(`${PATH_NAME}/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
+        .then((res)=>{setlunday(res.data.response.body.items.item);
+            setisloading(false);
+        })}, [PATH_NAME, toapiyear, toapimonth]);
 
-        useEffect(()=>{
-            const getholiday = async() => {
-                await axios.get(`${PATH_NAME}/SpcdeInfoService/getRestDeInfo?solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI%2FmxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG%2FQQQ%3D%3D`)
-                .then((res)=>{
-                setholiday(res.data.response.body.items.item);
-                })
-            }
-            getholiday()
-        })
-
-        useEffect(()=>{
-                const getData = async() => {
-                    await axios.get(`${PATH_NAME}/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
-                    .then((res) => {setlunday(res.data.response.body.items.item)
-                    setisloading(false);
-                    })}
-
-            return () => {
-            if(lunday.length == 0 || lunday[15]?.solMonth != toapimonth){
-                getData();
-            }}
-        })
-    console.log(holiday)
-  
-   
-    
     while(day <= endDate){
         {/* for문 => 1. 일주일치 day를 line배열에 저장하기 */}
         for(let i=0; i<7; i++){
             formattedDate = format(day, 'd').padStart(2,'0').toString();
-           
             {/* 다른 달일 경우 회색으로 표시하기 위해 if문 사용 */}
             if(format(monthStart,'M') != format(day,'M')){
                 days.push(
-                <DivDay key={day}>
-                <span className='notsamemonth solday' key={day}>
+                <DivDay key={day+"111"}>
+                <span className='notsamemonth' key={day}>
                 {formattedDate}
                 </span>
                 <span>
@@ -100,22 +83,37 @@ const Main = (currentMonth) => {
                 </DivDay>
                 )
                 }
-
             else{
                 days.push(
-                <DivDay key={day}>
-                <span className="solday" key={day}> {/* 양력 출력 */}
+                <DivDay key={day+'55'}>
+                {/* 양력 출력 */}
+                <span className="solday" key={day}>
                 {formattedDate == '01' ? 
                 format(monthStart,'M') + '월' + formattedDate + '일' :
                 lunday.find(sol => sol.solDay == formattedDate)?.solDay}
                 </span>
-                <span className='lunday' key={day}> {/* 음력 출력 */}
+
+                {/* 공휴일 출력 */}
+                <span className="redday" key={day+'200'}>
+                    {Array.isArray(holiday) ? 
+                    holiday?.find(item => item.locdate.toString().slice(-2) == formattedDate)?.
+                    dateName : ''}
+                </span>
+                
+                {Array.isArray(holiday)? 
+                    holiday?.find(red => red.locdate.toString().slice(-2) == formattedDate) ? 
+                    (<div className="redcircle"></div>) : '' : ""}
+
+
+                    
+
+
+                {/* 음력 출력 */}
+                <span className="lunday" key={day+'100'}>
                     {lunday.find(lun => lun.solDay == formattedDate)?.lunMonth+'월'
                     +lunday.find(lun => lun.solDay == formattedDate)?.lunDay+'일'}
                 </span>
-                <span className="redday" key={formattedDate}>
-                    {holiday?.find(hol => hol?.locdate == format(day,'yyyyMMdd').toString())?.dateName}
-                </span>
+                
                 </DivDay>
                 )
                 }
@@ -134,7 +132,7 @@ const Main = (currentMonth) => {
 
     return(
         <>
-        {isLoading ? <Loading/>:
+        {isLoading ? <Loading/> :
                     <DivWrapper>{line}</DivWrapper>}
         </>
     )

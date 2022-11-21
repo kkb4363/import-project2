@@ -12,6 +12,7 @@ body{
     margin-top:5px;
     margin-right:10px;
     position:relative;
+    z-index: 2;
 }
 
 .lunday{
@@ -23,7 +24,18 @@ body{
 
 .redday{
     position:absolute;
-    margin-top:50px;
+    margin-top:40px;
     margin-right:10px;
     color:red;
+}
+
+.redcircle{
+    position:absolute;
+    margin-right:3px;
+    margin-top:2px;
+    background-color:tomato;
+    width:30px;
+    height:30px;
+    border-radius:15px;
+    z-index: 1;
 }
