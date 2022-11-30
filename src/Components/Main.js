@@ -63,18 +63,6 @@ const Main = (currentMonth) => {
                 lunday.find(sol => sol.solDay == formattedDate)?.solDay}
                 </span>
 
-                <span key={day+'200'}>{/* 공휴일 출력 */}
-                    {console.log(Array.isArray(holiday))}
-                    {Array.isArray(holiday) ? holiday?.find(item => item.locdate.toString().slice(-2) == formattedDate)?.dateName
-                    : holiday?.locdate.toString().slice(-2) == formattedDate ? holiday.dateName : ''}
-                </span>
-                <span key={day+'100'}>{/* 음력 출력 */}
-                    {lunday.find(lun => lun.solDay == formattedDate)?.lunMonth+'월'
-                    +lunday.find(lun => lun.solDay == formattedDate)?.lunDay+'일'}
-                </span>
-                
-                </DivDay>
-
                 {/* 공휴일 출력 */}
                 <span className="redday" key={day+'200'}>
                     {console.log(holiday)}
@@ -102,7 +90,6 @@ const Main = (currentMonth) => {
             day = addDays(day,1);
         }
             line.push(<div className="divWeek" key={day}>{days}</div>)
-
         {/* 한 주를 저장하고, 새로운 한 주를 저장하기 위해 배열을 비움 */}
         days = [];
     }
