@@ -1,53 +1,8 @@
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, format, isLeapYear, monthsToQuarters } from "date-fns";
-import {  addDays} from "date-fns";
-import styled from "styled-components";
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, format } from "date-fns";
+import { addDays} from "date-fns";
 import axios from "axios";
 import {useEffect,useState} from 'react';
 import Loading from "./Loading";
-
-{/* 달력 틀 css */}
-const DivWrapper = styled.div`
-display:flex;
-height:900px;
-width:900px;
-flex-direction:column;
-`
-{/* 달력 한줄(1주일) css */}
-const DivWeek = styled.div`
-display:flex;
-width:900px;
-height:150px;
-flex-direction:row;
-div:first-child{
-    background-color:#2b2b2b;
-}
-div:last-child{
-    border-right-style:solid;
-    background-color:#2b2b2b;
-}
-`
-{/* 달력 하루(1일) css */}
-const DivDay = styled.div`
-width:125px;
-height:150px;
-display:flex;
-border: 0.1px solid #363636;
-justify-content:flex-end;
-border-right-style:none;
-span:first-child{
-    display:flex;
-    margin-top:5px;
-    margin-right:10px;
-    position:relative;
-}
-span:last-child{
-    position:absolute;
-    margin-top:120px;
-    margin-right:10px;
-    color:#808080
-}
-
-`
 
 const Main = (currentMonth) => {
     const monthStart = startOfMonth(currentMonth.currentMonth); {/* 해당 달 1일값 구하기 */}
@@ -64,56 +19,50 @@ const Main = (currentMonth) => {
     let line = [];                                              {/* 전체 day를 출력하기 위해 days배열을 7주일씩 전부 저장하기 위한 배열 */}
     let formattedDate = '';
     
-    const [holiday, setholiday] = useState([]);
+    const [holiday, setholiday] = useState([]);         // 공휴일 api 받기
     useEffect(()=>{
         axios.get(`${PATH_NAME}/SpcdeInfoService/getRestDeInfo?solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI%2FmxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG%2FQQQ%3D%3D`)
         .then((res)=>{
             setholiday(res.data.response.body.items.item);
         })}, [PATH_NAME, toapiyear, toapimonth]);
 
-    
     const [isLoading,setisloading] = useState(true);
-    const [lunday,setlunday] = useState([]);
-    useEffect(()=>{
+    const [lunday,setlunday] = useState([]);            // 음력 api 받기
+    useEffect(()=>{             
         axios.get(`${PATH_NAME}/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=${toapiyear}&solMonth=${toapimonth}&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
         .then((res)=>{setlunday(res.data.response.body.items.item);
             setisloading(false);
         })}, [PATH_NAME, toapiyear, toapimonth]);
 
-    // const [test,settest] = useState([]);
-    // useEffect(()=>{
-    //     axios.get(`https://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo?numOfRows=31&solYear=2022&solMonth=11&_type=json&ServiceKey=ziROfCzWMmrKIseBzkXs58HpS39GI/mxjSEmUeZbKwYuyxnSc2kILXCBXlRpPZ8iam5cqwZqtw6db7CnWG/QQQ==`)
-    //     .then((res)=>{settest(res.data.response.body.items.item);
-    //     })}, [PATH_NAME, toapiyear, toapimonth]);
-        
-    //     console.log(test)
-
-    
     while(day <= endDate){
-        {/* for문 => 1. 일주일치 day를 line배열에 저장하기 */}
+        {/* for문 => 일주일치 day를 line배열에 저장하기 */}
         for(let i=0; i<7; i++){
             formattedDate = format(day, 'd').padStart(2,'0').toString();
+    
             {/* 다른 달일 경우 회색으로 표시하기 위해 if문 사용 */}
             if(format(monthStart,'M') != format(day,'M')){
                 days.push(
-                <DivDay key={day+"111"}>
+                <div className="divDay" key={day+"111"}>
                 <span className='notsamemonth' key={day}>
                 {formattedDate}
                 </span>
                 <span>
                     
                 </span>
-                </DivDay>
+                </div>
                 )
                 }
             else{
                 days.push(
-                <DivDay key={day+'55'}>
-                <span key={day}>{/* 양력 출력 */}
+                <div className="divDay" key={day+'55'}>
+                    
+                {/* 양력 출력 */}
+                <span className="solday" key={day+'120'}>
                 {formattedDate == '01' ? 
                 format(monthStart,'M') + '월' + formattedDate + '일' :
                 lunday.find(sol => sol.solDay == formattedDate)?.solDay}
                 </span>
+
                 <span key={day+'200'}>{/* 공휴일 출력 */}
                     {console.log(Array.isArray(holiday))}
                     {Array.isArray(holiday) ? holiday?.find(item => item.locdate.toString().slice(-2) == formattedDate)?.dateName
@@ -125,29 +74,44 @@ const Main = (currentMonth) => {
                 </span>
                 
                 </DivDay>
+
+                {/* 공휴일 출력 */}
+                <span className="redday" key={day+'200'}>
+                    {console.log(holiday)}
+                    {Array.isArray(holiday) ? 
+                    holiday?.find(item => item.locdate.toString().slice(-2) == formattedDate)?.
+                    dateName : holiday?.locdate.toString().slice(-2) == formattedDate ? holiday?.dateName : ''}
+                </span>
+                
+                {/* 공휴일 빨간 원 출력 */}
+                {Array.isArray(holiday)? 
+                    holiday?.find(red => red.locdate.toString().slice(-2) == formattedDate) ? 
+                    (<div className="redcircle"/>) : ('') : holiday?.locdate.toString().slice(-2) == formattedDate ? 
+                    (<div className="redcircle"/>) : ('')}
+
+                {/* 음력 출력 */}
+                <span className="lunday" key={day+'100'}>
+                    {lunday.find(lun => lun.solDay == formattedDate)?.lunMonth+'월'
+                    +lunday.find(lun => lun.solDay == formattedDate)?.lunDay+'일'}
+                </span>
+
+                </div>
+
                 )
                 }
             day = addDays(day,1);
         }
+            line.push(<div className="divWeek" key={day}>{days}</div>)
 
-            line.push(
-                <DivWeek key={day}>
-                    {days}
-                </DivWeek>
-            )
         {/* 한 주를 저장하고, 새로운 한 주를 저장하기 위해 배열을 비움 */}
         days = [];
     }
 
-
     return(
         <>
-        {isLoading ? <Loading/> :
-                    <DivWrapper>{line}</DivWrapper>}
+        {isLoading ? <Loading/> : <div className="divWrapper">{line}</div>}
         </>
     )
-
 }
-
 
 export default Main;

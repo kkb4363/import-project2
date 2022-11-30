@@ -4,8 +4,7 @@ import '../CSS/style.css'
 import { useState } from "react";
 import { addMonths, subMonths} from 'date-fns';
 import Main from "../Components/Main";
-{/* 브랜치 테스트 기범  */}
-const nothing = new Date();
+
 
 const Calander = () => {
   {/* new Date()함수로 현재 시간,날짜를 알 수있다. */}
